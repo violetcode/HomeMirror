@@ -6,6 +6,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -23,19 +24,17 @@ import com.squareup.picasso.Picasso;
 
 public class MirrorActivity extends ActionBarActivity {
 
-    private static final boolean DEMO_MODE = false;
-
     private TextView mBirthdayText;
     private TextView mDayText;
     private TextView mWeatherSummary;
     private TextView mHelloText;
-    private TextView mBikeTodayText;
-    private TextView mStockText;
-    private View mWaterPlants;
-    private View mGroceryList;
-    private ImageView mXKCDImage;
+    //private TextView mBikeTodayText;
+    //private TextView mStockText;
+    //private View mWaterPlants;
+    //private View mGroceryList;
+    //private ImageView mXKCDImage;
 
-    private XKCDModule.XKCDListener mXKCDListener = new XKCDModule.XKCDListener() {
+    /*private XKCDModule.XKCDListener mXKCDListener = new XKCDModule.XKCDListener() {
         @Override
         public void onNewXKCDToday(String url) {
             if (TextUtils.isEmpty(url)) {
@@ -45,8 +44,9 @@ public class MirrorActivity extends ActionBarActivity {
                 mXKCDImage.setVisibility(View.VISIBLE);
             }
         }
-    };
+    };*/
 
+    /*
     private YahooFinanceModule.StockListener mStockListener = new YahooFinanceModule.StockListener() {
         @Override
         public void onNewStockPrice(YahooStockResponse.YahooQuoteResponse quoteResponse) {
@@ -57,7 +57,7 @@ public class MirrorActivity extends ActionBarActivity {
                 mStockText.setText("$" + quoteResponse.symbol + " $" + quoteResponse.LastTradePriceOnly);
             }
         }
-    };
+    }; */
 
     private ForecastModule.ForecastListener mForecastListener = new ForecastModule.ForecastListener() {
         @Override
@@ -66,12 +66,6 @@ public class MirrorActivity extends ActionBarActivity {
                 mWeatherSummary.setVisibility(View.VISIBLE);
                 mWeatherSummary.setText(weatherToday);
             }
-        }
-
-        @Override
-        public void onShouldBike(boolean showToday, boolean shouldBike) {
-            mBikeTodayText.setVisibility(showToday ? View.VISIBLE : View.GONE);
-            mBikeTodayText.setText(shouldBike ? R.string.bike_today : R.string.no_bike_today);
         }
     };
 
@@ -94,11 +88,11 @@ public class MirrorActivity extends ActionBarActivity {
         mDayText = (TextView) findViewById(R.id.day_text);
         mWeatherSummary = (TextView) findViewById(R.id.weather_summary);
         mHelloText = (TextView) findViewById(R.id.hello_text);
-        mWaterPlants = findViewById(R.id.water_plants);
-        mGroceryList = findViewById(R.id.grocery_list);
-        mBikeTodayText = (TextView) findViewById(R.id.can_bike);
-        mStockText = (TextView) findViewById(R.id.stock_text);
-        mXKCDImage = (ImageView) findViewById(R.id.xkcd_image);
+        //mWaterPlants = findViewById(R.id.water_plants);
+        //mGroceryList = findViewById(R.id.grocery_list);
+        //mBikeTodayText = (TextView) findViewById(R.id.can_bike);
+        //mStockText = (TextView) findViewById(R.id.stock_text);
+        /*mXKCDImage = (ImageView) findViewById(R.id.xkcd_image);
 
         //Negative of XKCD image
         float[] colorMatrixNegative = {
@@ -108,7 +102,7 @@ public class MirrorActivity extends ActionBarActivity {
                 0, 0, 0, 1.0f, 0 //alpha
         };
         ColorFilter colorFilterNegative = new ColorMatrixColorFilter(colorMatrixNegative);
-//        mXKCDImage.setColorFilter(colorFilterNegative); // not inverting for now
+//        mXKCDImage.setColorFilter(colorFilterNegative); // not inverting for now */
 
         setViewState();
     }
@@ -131,25 +125,34 @@ public class MirrorActivity extends ActionBarActivity {
         mDayText.setText(DayModule.getDay());
 //        mHelloText.setText(TimeModule.getTimeOfDayWelcome(getResources())); // not in current design
 
-        mWaterPlants.setVisibility(ChoresModule.waterPlantsToday() ? View.VISIBLE : View.GONE);
-        mGroceryList.setVisibility(ChoresModule.makeGroceryListToday() ? View.VISIBLE : View.GONE);
+        //mWaterPlants.setVisibility(ChoresModule.waterPlantsToday() ? View.VISIBLE : View.GONE);
+        //mGroceryList.setVisibility(ChoresModule.makeGroceryListToday() ? View.VISIBLE : View.GONE);
 
-        ForecastModule.getHourlyForecast(getResources(), 40.681045, -73.9931749, mForecastListener);
-        XKCDModule.getXKCDForToday(mXKCDListener);
+        // Get latitude and longitude
 
+        TypedValue raw_lat = new TypedValue();
+        TypedValue raw_lon = new TypedValue();
+        getResources().getValue(R.dimen.latitude, raw_lat, true);
+        getResources().getValue(R.dimen.longitude, raw_lon, true);
+        float lat = raw_lat.getFloat();
+        float lon = raw_lon.getFloat();
+        String raw_units = getString(R.string.temp_units);
+        String units = "si";
+        if(raw_units.equals("F")){
+            units = "us";
+        }
+
+        ForecastModule.getHourlyForecast(getResources(), lat, lon, units, mForecastListener);
+        //XKCDModule.getXKCDForToday(mXKCDListener);
+
+        /*
         if (WeekUtil.isWeekday() && WeekUtil.afterFive()) {
             YahooFinanceModule.getStockForToday("ETSY", mStockListener);
         } else {
             mStockText.setVisibility(View.GONE);
         }
+        */
     }
 
-    private void showDemoMode() {
-        if (DEMO_MODE) {
-            mBikeTodayText.setVisibility(View.VISIBLE);
-            mStockText.setVisibility(View.VISIBLE);
-            mWaterPlants.setVisibility(View.VISIBLE);
-            mGroceryList.setVisibility(View.VISIBLE);
-        }
-    }
+
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="latitude" type="dimen" format="float">47.503941</item>
+    <item name="longitude" type="dimen" format="float">-122.181750</item>
+
+    <string name="temp_units">F</string> // F for fahrenheit, C for Celsius
+</resources>

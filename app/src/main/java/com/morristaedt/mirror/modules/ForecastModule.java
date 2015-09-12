@@ -23,11 +23,9 @@ public class ForecastModule {
 
     public interface ForecastListener {
         void onWeatherToday(String weatherToday);
-
-        void onShouldBike(boolean showToday, boolean shouldBike);
     }
 
-    public static void getHourlyForecast(final Resources resources, final double lat, final double lon, final ForecastListener listener) {
+    public static void getHourlyForecast(final Resources resources, final double lat, final double lon, final String units, final ForecastListener listener) {
         new AsyncTask<Void, Void, ForecastResponse>() {
 
             @Override
@@ -45,8 +43,9 @@ public class ForecastModule {
 
                 ForecastRequest service = restAdapter.create(ForecastRequest.class);
                 String excludes = "minutely,daily,flags";
-                String units = "si";
                 Log.d("mirror", "backgrounddd");
+                Log.d("mirror", "Latitude : " + lat);
+                Log.d("mirror", "Longitude : "+ lon);
                 return service.getHourlyForecast(resources.getString(R.string.dark_sky_api_key), lat, lon, excludes, units);
             }
 
@@ -56,38 +55,7 @@ public class ForecastModule {
                     if (forecastResponse.currently != null) {
                         listener.onWeatherToday(forecastResponse.currently.getDisplayTemperature() + " " + forecastResponse.currently.summary);
                     }
-
-                    if (WeekUtil.isWeekday() && !WeekUtil.afterFive() && forecastResponse.hourly != null && forecastResponse.hourly.data != null) {
-                        listener.onShouldBike(true, shouldBikeToday(forecastResponse.hourly.data));
-                    } else {
-                        listener.onShouldBike(false, true);
-                    }
                 }
-            }
-
-            private boolean shouldBikeToday(List<ForecastResponse.Hour> hours) {
-                int dayOfMonthToday = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
-                for (ForecastResponse.Hour hour : hours) {
-                    Calendar hourCalendar = hour.getCalendar();
-
-                    // Only check hourly forecast for today
-                    if (hourCalendar.get(Calendar.DAY_OF_MONTH) == dayOfMonthToday) {
-                        int hourOfDay = hourCalendar.get(Calendar.HOUR_OF_DAY);
-                        Log.i("mirror", "Hour of day is " + hourOfDay + " with precipProb " + hour.precipProbability);
-                        if (hourOfDay >= 7 && hourOfDay <= 11) {
-                            if (hour.precipProbability >= 0.3) {
-                                return false;
-                            }
-                        } else if (hourOfDay >= 17 && hourOfDay <= 19) {
-                            if (hour.precipProbability >= 0.3) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-
-                return true;
             }
         }.execute();
 

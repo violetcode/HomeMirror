@@ -14,9 +14,11 @@ public class DayModule {
 
     public static Spanned getDay() {
         SimpleDateFormat formatDayOfMonth = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat formatMonth = new SimpleDateFormat("LLLL", Locale.US);
         Calendar now = Calendar.getInstance();
         int dayOfMonth = now.get(Calendar.DAY_OF_MONTH);
-        return Html.fromHtml(formatDayOfMonth.format(now.getTime()) + " the " + dayOfMonth + "<sup><small>" + getDayOfMonthSuffix(dayOfMonth) + "</small></sup>");
+        return Html.fromHtml(formatDayOfMonth.format(now.getTime()) + ", " + formatMonth.format(now.getTime()) + " " + dayOfMonth + "<sup><small>" + getDayOfMonthSuffix(dayOfMonth) + "</small></sup>");
+
     }
 
     private static String getDayOfMonthSuffix(final int n) {

@@ -4,7 +4,7 @@
     <string name="default_mirror_mirror">Mirror, mirror on the wall. Hannah is the prettiest of them all.</string>
 
     <!-- Owners -->
-    <string name="owners">Hannah and Andy</string>
+    <string name="owners">Josh and Marie</string>
 
     <!-- Time module -->
     <string name="good_morning">Good morning, %s</string>
@@ -23,4 +23,5 @@
     <!-- Chores module -->
     <string name="water_plants">Water Plants Today</string>
     <string name="grocery_list">Make Grocery List</string>
+
 </resources>
